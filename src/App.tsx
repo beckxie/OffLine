@@ -1,4 +1,4 @@
-import { useState, useTransition, useCallback, useMemo } from 'react';
+import { useState, useTransition, useCallback, useMemo, useEffect, useRef } from 'react';
 import { parseLineChatFile, readFileAsText } from './utils/lineParser';
 import { ChatFile, Message } from './types';
 import { useSearch } from './hooks/useSearch';
@@ -28,22 +28,55 @@ function App() {
         totalResults,
     } = useSearch(chatFile?.messages || [], startTransition);
 
-    // View State (Task 5, 6: Context Jumping)
-    // When jumpTargetId is set, we show all messages but scroll to target.
+    // View State
     const [jumpTargetIndex, setJumpTargetIndex] = useState<number | null>(null);
 
-    // When we are "viewing context", we are technically looking at the full list
-    // but maybe we want to keep the search bar active?
-    // Let's define:
-    // - If isFiltering: Show filtered list.
-    // - If user clicks a message in filtered list: Clear filters (or switch mode) -> Show full list -> Scroll to message.
+    // Resizable Sidebar State
+    const [sidebarWidth, setSidebarWidth] = useState(320);
+    const [isResizing, setIsResizing] = useState(false);
+    const sidebarRef = useRef<HTMLElement>(null);
+
+    const startResizing = useCallback(() => setIsResizing(true), []);
+    const stopResizing = useCallback(() => setIsResizing(false), []);
+
+    const resize = useCallback(
+        (e: MouseEvent) => {
+            if (isResizing) {
+                // Limit width between 280px and 50% of screen
+                const newWidth = Math.max(280, Math.min(e.clientX, window.innerWidth * 0.6));
+                setSidebarWidth(newWidth);
+            }
+        },
+        [isResizing]
+    );
+
+    useEffect(() => {
+        if (isResizing) {
+            window.addEventListener('mousemove', resize);
+            window.addEventListener('mouseup', stopResizing);
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none'; // Prevent selection while dragging
+        } else {
+            window.removeEventListener('mousemove', resize);
+            window.removeEventListener('mouseup', stopResizing);
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        }
+        return () => {
+            window.removeEventListener('mousemove', resize);
+            window.removeEventListener('mouseup', stopResizing);
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        };
+    }, [isResizing, resize, stopResizing]);
+
 
     const handleFileSelect = useCallback(async (file: File) => {
+        // ... existing logic ...
         setIsLoading(true);
         setLoadingProgress(0);
         try {
             const content = await readFileAsText(file);
-            // Give UI a moment to show loading state before blocking
             setTimeout(() => {
                 const parsed = parseLineChatFile(content, (progress) => {
                     setLoadingProgress(progress);
@@ -60,29 +93,21 @@ function App() {
 
     const handleMessageClick = useCallback(
         (message: Message) => {
-            // If we are filtering, clicking a message means "Jump to context"
-            // We need to find the index of this message in the *original* list
             if (!chatFile) return;
 
             const originalIndex = chatFile.messages.findIndex(
                 (m) => m.id === message.id
             );
             if (originalIndex !== -1) {
-                // Clear filters to show context
                 setKeyword('');
                 setSelectedSpeakers([]);
                 setDateRange('', '');
-
-                // Scroll to item
-                // We set index immediately. The re-render will show full list (since filters cleared)
-                // and MessageList will handle scrolling via useEffect.
                 setJumpTargetIndex(originalIndex);
             }
         },
         [chatFile, setKeyword, setSelectedSpeakers, setDateRange]
     );
 
-    // Derive date strings for picker
     const dateRangeStr = useMemo(() => {
         return {
             min: chatFile?.dateRange.start?.toISOString().split('T')[0],
@@ -104,11 +129,25 @@ function App() {
 
     return (
         <div className="app">
-            <aside className="app__sidebar">
+            <aside
+                className="app__sidebar"
+                style={{ width: sidebarWidth }}
+                ref={sidebarRef}
+            >
                 <div className="app__sidebar-header">
-                    <h2 className="app__group-name">{chatFile.groupName}</h2>
-                    <div className="app__meta">
-                        {chatFile.messages.length.toLocaleString()} 則訊息
+                    <button
+                        className="app__home-button"
+                        onClick={() => setChatFile(null)}
+                        title="回到首頁"
+                        aria-label="回到首頁"
+                    >
+                        ←
+                    </button>
+                    <div className="app__sidebar-title-wrapper">
+                        <h2 className="app__group-name">{chatFile.groupName}</h2>
+                        <div className="app__meta">
+                            {chatFile.messages.length.toLocaleString()} 則訊息
+                        </div>
                     </div>
                 </div>
 
@@ -137,6 +176,12 @@ function App() {
                     </div>
                 </div>
             </aside>
+
+            {/* Resizer Handle */}
+            <div
+                className={`app__resizer ${isResizing ? 'app__resizer--active' : ''}`}
+                onMouseDown={startResizing}
+            />
 
             <main className="app__main">
                 {isPending && <div className="app__loading-overlay">搜尋中...</div>}

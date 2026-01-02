@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import './SpeakerFilter.css';
 
 interface SpeakerFilterProps {
@@ -12,6 +12,18 @@ export function SpeakerFilter({
     selectedSpeakers,
     onChange,
 }: SpeakerFilterProps) {
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const filteredSpeakers = useMemo(() => {
+        if (!searchTerm) {
+            return speakers;
+        }
+        const lowerTerm = searchTerm.toLowerCase();
+        return speakers.filter(speaker =>
+            speaker.toLowerCase().includes(lowerTerm)
+        );
+    }, [speakers, searchTerm]);
+
     const handleSpeakerChange = useCallback(
         (event: React.ChangeEvent<HTMLInputElement>) => {
             const speaker = event.target.value;
@@ -27,9 +39,7 @@ export function SpeakerFilter({
     );
 
     const handleSelectAll = useCallback(() => {
-        onChange([]); // Empty means "all" in our logic usually, or we can explicit select all.
-        // Let's adopt the convention: empty array = show all.
-        // If user explicitly clicks "select all", we clear the filter.
+        onChange([]);
     }, [onChange]);
 
     if (speakers.length === 0) return null;
@@ -37,22 +47,38 @@ export function SpeakerFilter({
     return (
         <div className="speaker-filter">
             <h3 className="speaker-filter__title">發言人 ({speakers.length})</h3>
-            <div className="speaker-filter__list">
-                {speakers.map((speaker) => (
-                    <label key={speaker} className="speaker-filter__item">
-                        <input
-                            type="checkbox"
-                            value={speaker}
-                            checked={selectedSpeakers.includes(speaker)}
-                            onChange={handleSpeakerChange}
-                            className="speaker-filter__checkbox"
-                        />
-                        <span className="speaker-filter__label" title={speaker}>
-                            {speaker}
-                        </span>
-                    </label>
-                ))}
+
+            <div className="speaker-filter__search-wrapper">
+                <input
+                    type="text"
+                    className="speaker-filter__search"
+                    placeholder="搜尋發言人..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
             </div>
+
+            <div className="speaker-filter__list">
+                {filteredSpeakers.length > 0 ? (
+                    filteredSpeakers.map((speaker) => (
+                        <label key={speaker} className="speaker-filter__item">
+                            <input
+                                type="checkbox"
+                                value={speaker}
+                                checked={selectedSpeakers.includes(speaker)}
+                                onChange={handleSpeakerChange}
+                                className="speaker-filter__checkbox"
+                            />
+                            <span className="speaker-filter__label" title={speaker}>
+                                {speaker}
+                            </span>
+                        </label>
+                    ))
+                ) : (
+                    <div className="speaker-filter__empty">找不到發言人</div>
+                )}
+            </div>
+
             {selectedSpeakers.length > 0 && (
                 <button
                     className="speaker-filter__reset"

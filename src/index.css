@@ -1,58 +1,89 @@
 :root {
-  --color-primary: #06c755;
-  --color-primary-dark: #05a647;
-  --color-primary-light: #e8f8ee;
-  --color-bg: #f5f5f5;
-  --color-bg-dark: #1a1a1a;
-  --color-surface: #ffffff;
-  --color-surface-dark: #2d2d2d;
-  --color-text: #333333;
-  --color-text-dark: #e0e0e0;
-  --color-text-secondary: #666666;
-  --color-text-secondary-dark: #a0a0a0;
-  --color-border: #e0e0e0;
-  --color-border-dark: #404040;
-  --color-highlight: #fff3cd;
-  --color-highlight-dark: #4a4020;
+  /* Apple Design System Colors - Light Mode */
+  --color-primary: #34C759;
+  /* iOS Green */
+  --color-primary-dark: #248A3D;
+  --color-primary-light: #EBFDF0;
 
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-size-base: 16px;
-  --font-size-sm: 14px;
-  --font-size-xs: 12px;
-  --font-size-lg: 18px;
-  --font-size-xl: 24px;
-  --font-size-2xl: 32px;
-  --font-size-3xl: 48px;
+  --color-bg: #F5F5F7;
+  /* Apple System Gray 6 / Web Background */
+  --color-surface: #FFFFFF;
+  --color-surface-translucent: rgba(255, 255, 255, 0.8);
 
+  --color-text: #1D1D1F;
+  /* Apple Text Primary */
+  --color-text-secondary: #86868B;
+  /* Apple Text Secondary */
+
+  --color-border: #D1D1D6;
+  /* Apple System Gray 4 */
+  --color-separator: #E5E5EA;
+  /* Apple System Gray 5 */
+
+  --color-highlight: #FFF4CE;
+
+  /* Typography */
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Spacing */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
-  --spacing-2xl: 48px;
+  --spacing-2xl: 40px;
   --spacing-3xl: 64px;
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 32px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.12);
+  --shadow-float: 0 20px 40px rgba(0, 0, 0, 0.15);
 
-  --transition-fast: 150ms ease;
-  --transition-normal: 250ms ease;
+  /* Blur */
+  --blur-md: 20px;
+  --blur-lg: 30px;
 
-  font-family: var(--font-family);
-  line-height: 1.6;
-  font-weight: 400;
-  color-scheme: light dark;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+  --transition-normal: 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  /* Smoother Apple-like easing */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Apple Design System Colors - Dark Mode */
+    --color-primary: #30D158;
+    /* iOS Dark Mode Green */
+    --color-primary-dark: #208e3b;
+    --color-primary-light: rgba(48, 209, 88, 0.15);
+
+    --color-bg: #000000;
+    /* Pure black mainly, or remarkably dark gray */
+    --color-surface: #1C1C1E;
+    /* Secondary System Background */
+    --color-surface-translucent: rgba(28, 28, 30, 0.75);
+
+    --color-text: #F5F5F7;
+    --color-text-secondary: #86868B;
+
+    --color-border: #38383A;
+    --color-separator: #2C2C2E;
+
+    --color-highlight: rgba(255, 214, 10, 0.2);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.4);
+  }
 }
 
 *,
@@ -61,19 +92,18 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   min-height: 100vh;
-  background: var(--color-bg);
+  background-color: var(--color-bg);
   color: var(--color-text);
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background: var(--color-bg-dark);
-    color: var(--color-text-dark);
-  }
+  font-family: var(--font-family);
+  line-height: 1.5;
+  font-size: 15px;
+  /* Apple uses slightly smaller but readable body text usually 15-17px */
 }
 
 #root {
@@ -82,29 +112,24 @@ body {
   flex-direction: column;
 }
 
-/* Utility classes */
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+/* Glassmorphism Utility */
+.glass {
+  background: var(--color-surface-translucent);
+  backdrop-filter: blur(var(--blur-md));
+  -webkit-backdrop-filter: blur(var(--blur-md));
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Focus styles for accessibility */
-:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+@media (prefers-color-scheme: light) {
+  .glass {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
 }
 
-/* Scrollbar styles */
+/* Scrollbar styling for a cleaner look */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -112,20 +137,17 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: rgba(128, 128, 128, 0.3);
   border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-secondary);
+  background-color: rgba(128, 128, 128, 0.5);
 }
 
-@media (prefers-color-scheme: dark) {
-  ::-webkit-scrollbar-thumb {
-    background: var(--color-border-dark);
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-text-secondary-dark);
-  }
+button,
+input {
+  font-family: inherit;
 }

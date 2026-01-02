@@ -1,8 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useSearch } from '../hooks/useSearch';
 import { Message } from '../types';
-import { startTransition } from 'react';
 
 // Mock data
 const mockMessages: Message[] = [
@@ -11,11 +10,6 @@ const mockMessages: Message[] = [
     { id: 3, timestamp: new Date('2022-04-02T09:00:00'), author: 'Alice', content: 'Good morning', isSystemMessage: false },
     { id: 4, timestamp: new Date('2022-04-02T09:30:00'), author: '', content: '', isSystemMessage: true }, // System msg
 ];
-
-// Helper wrapper for startTransition
-// In React 18 tests, we might need to wrap updates.
-// Vitest environment is jsdom but let's see if simple wrapper works.
-const wrapper = ({ children }: { children: React.ReactNode }) => children;
 
 describe('useSearch', () => {
     it('should return all messages initially', () => {

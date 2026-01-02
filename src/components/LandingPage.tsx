@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import './LandingPage.css';
 
 interface LandingPageProps {
@@ -8,6 +8,8 @@ interface LandingPageProps {
 }
 
 export function LandingPage({ onFileSelect, isLoading, progress }: LandingPageProps) {
+    const [isDragging, setIsDragging] = useState(false);
+
     const handleFileChange = useCallback(
         (event: React.ChangeEvent<HTMLInputElement>) => {
             const file = event.target.files?.[0];
@@ -21,6 +23,7 @@ export function LandingPage({ onFileSelect, isLoading, progress }: LandingPagePr
     const handleDrop = useCallback(
         (event: React.DragEvent<HTMLDivElement>) => {
             event.preventDefault();
+            setIsDragging(false);
             const file = event.dataTransfer.files?.[0];
             if (file && file.name.endsWith('.txt')) {
                 onFileSelect(file);
@@ -31,6 +34,22 @@ export function LandingPage({ onFileSelect, isLoading, progress }: LandingPagePr
 
     const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
+        // Keep dragging true while over
+        setIsDragging(true);
+    }, []);
+
+    const handleDragEnter = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        setIsDragging(true);
+    }, []);
+
+    const handleDragLeave = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        // Only set false if leaving the main container
+        if (event.currentTarget.contains(event.relatedTarget as Node)) {
+            return;
+        }
+        setIsDragging(false);
     }, []);
 
     return (
@@ -55,7 +74,7 @@ export function LandingPage({ onFileSelect, isLoading, progress }: LandingPagePr
                             />
                         </svg>
                     </div>
-                    <h1 className="landing__title">LINE Chat Viewer</h1>
+                    <h1 className="landing__title">OffLine</h1>
                     <p className="landing__subtitle">離線聊天記錄搜尋工具</p>
                 </header>
 
@@ -86,9 +105,11 @@ export function LandingPage({ onFileSelect, isLoading, progress }: LandingPagePr
 
                 {/* Upload Area */}
                 <section
-                    className={`landing__upload ${isLoading ? 'landing__upload--loading' : ''}`}
+                    className={`landing__upload ${isLoading ? 'landing__upload--loading' : ''} ${isDragging ? 'landing__upload--dragging' : ''}`}
                     onDrop={handleDrop}
                     onDragOver={handleDragOver}
+                    onDragEnter={handleDragEnter}
+                    onDragLeave={handleDragLeave}
                 >
                     {isLoading ? (
                         <div className="landing__progress">
@@ -104,7 +125,7 @@ export function LandingPage({ onFileSelect, isLoading, progress }: LandingPagePr
                         <>
                             <div className="landing__upload-icon">📁</div>
                             <p className="landing__upload-text">
-                                拖放 LINE 聊天記錄 (.txt) 至此處
+                                {isDragging ? '放開以開始解析' : '拖放 LINE 聊天記錄 (.txt) 至此處'}
                             </p>
                             <p className="landing__upload-or">或</p>
                             <label className="landing__upload-button">
@@ -127,7 +148,7 @@ export function LandingPage({ onFileSelect, isLoading, progress }: LandingPagePr
                         <li>開啟 LINE 聊天室 → 點擊右上角選單</li>
                         <li>選擇「其他設定」→「傳送聊天記錄」</li>
                         <li>選擇「以文字檔傳送」</li>
-                        <li>將檔案儲存後上傳至此網站</li>
+                        <li>將檔案儲存後即可得到 .txt 檔案</li>
                     </ol>
                 </section>
 

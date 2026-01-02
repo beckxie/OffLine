@@ -150,6 +150,20 @@
     }
 }
 
+.landing__upload--dragging {
+    border-color: var(--color-primary) !important;
+    background: rgba(52, 199, 89, 0.05);
+    box-shadow: 0 0 0 4px rgba(52, 199, 89, 0.2), var(--shadow-float);
+    transform: scale(1.02);
+}
+
+@media (prefers-color-scheme: dark) {
+    .landing__upload--dragging {
+        background: rgba(48, 209, 88, 0.1);
+        box-shadow: 0 0 0 4px rgba(48, 209, 88, 0.3), var(--shadow-float);
+    }
+}
+
 .landing__upload-icon {
     font-size: 64px;
     margin-bottom: var(--spacing-lg);
