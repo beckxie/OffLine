@@ -1,0 +1,27 @@
+.message-list {
+    flex: 1;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+    .message-list {
+        background: var(--color-surface-dark);
+    }
+}
+
+.message-list__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+}
+
+@media (prefers-color-scheme: dark) {
+    .message-list__empty {
+        color: var(--color-text-secondary-dark);
+    }
+}

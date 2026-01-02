@@ -1,0 +1,284 @@
+.landing {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-primary-light) 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+    .landing {
+        background: linear-gradient(135deg, var(--color-bg-dark) 0%, #0a2a15 100%);
+    }
+}
+
+.landing__container {
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+
+/* Hero */
+.landing__hero {
+    margin-bottom: var(--spacing-2xl);
+}
+
+.landing__logo {
+    margin-bottom: var(--spacing-md);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.landing__title {
+    font-size: var(--font-size-3xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
+    letter-spacing: -0.02em;
+}
+
+.landing__subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+}
+
+@media (prefers-color-scheme: dark) {
+    .landing__subtitle {
+        color: var(--color-text-secondary-dark);
+    }
+}
+
+/* Features */
+.landing__features {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-2xl);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.landing__feature {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-surface);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-sm);
+}
+
+@media (prefers-color-scheme: dark) {
+    .landing__feature {
+        background: var(--color-surface-dark);
+    }
+}
+
+.landing__feature-icon {
+    font-size: var(--font-size-xl);
+}
+
+.landing__feature-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    font-size: var(--font-size-sm);
+}
+
+.landing__feature-text strong {
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+@media (prefers-color-scheme: dark) {
+    .landing__feature-text strong {
+        color: var(--color-text-dark);
+    }
+}
+
+.landing__feature-text span {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+}
+
+@media (prefers-color-scheme: dark) {
+    .landing__feature-text span {
+        color: var(--color-text-secondary-dark);
+    }
+}
+
+/* Upload Area */
+.landing__upload {
+    padding: var(--spacing-3xl) var(--spacing-xl);
+    background: var(--color-surface);
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+    margin-bottom: var(--spacing-2xl);
+}
+
+@media (prefers-color-scheme: dark) {
+    .landing__upload {
+        background: var(--color-surface-dark);
+        border-color: var(--color-border-dark);
+    }
+}
+
+.landing__upload:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .landing__upload:hover {
+        background: rgba(6, 199, 85, 0.1);
+    }
+}
+
+.landing__upload--loading {
+    cursor: default;
+    border-style: solid;
+    border-color: var(--color-primary);
+}
+
+.landing__upload-icon {
+    font-size: 64px;
+    margin-bottom: var(--spacing-md);
+}
+
+.landing__upload-text {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.landing__upload-or {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+.landing__upload-button {
+    display: inline-block;
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: var(--color-primary);
+    color: white;
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.landing__upload-button:hover {
+    background: var(--color-primary-dark);
+}
+
+/* Progress */
+.landing__progress {
+    width: 100%;
+}
+
+.landing__progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--color-border);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--spacing-md);
+}
+
+@media (prefers-color-scheme: dark) {
+    .landing__progress-bar {
+        background: var(--color-border-dark);
+    }
+}
+
+.landing__progress-fill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-fast);
+}
+
+.landing__progress-text {
+    font-size: var(--font-size-lg);
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+/* Instructions */
+.landing__instructions {
+    text-align: left;
+    padding: var(--spacing-lg);
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+@media (prefers-color-scheme: dark) {
+    .landing__instructions {
+        background: var(--color-surface-dark);
+    }
+}
+
+.landing__instructions-title {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+}
+
+.landing__instructions-list {
+    padding-left: var(--spacing-lg);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+@media (prefers-color-scheme: dark) {
+    .landing__instructions-list {
+        color: var(--color-text-secondary-dark);
+    }
+}
+
+.landing__instructions-list li {
+    margin-bottom: var(--spacing-xs);
+}
+
+/* Footer */
+.landing__footer {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+@media (prefers-color-scheme: dark) {
+    .landing__footer {
+        color: var(--color-text-secondary-dark);
+    }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .landing__title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .landing__features {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .landing__upload {
+        padding: var(--spacing-xl) var(--spacing-md);
+    }
+}
