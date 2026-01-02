@@ -1,0 +1,120 @@
+.app {
+    display: flex;
+    height: 100vh;
+    background: var(--color-bg);
+    overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+    .app {
+        background: var(--color-bg-dark);
+    }
+}
+
+/* Sidebar */
+.app__sidebar {
+    width: 320px;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+}
+
+@media (prefers-color-scheme: dark) {
+    .app__sidebar {
+        background: var(--color-surface-dark);
+        border-color: var(--color-border-dark);
+    }
+}
+
+.app__sidebar-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
+}
+
+@media (prefers-color-scheme: dark) {
+    .app__sidebar-header {
+        border-color: var(--color-border-dark);
+    }
+}
+
+.app__group-name {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.app__meta {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+}
+
+.app__filters {
+    flex: 1;
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    overflow: hidden;
+}
+
+.app__filter-scroller {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding-right: var(--spacing-xs);
+}
+
+/* Main Area */
+.app__main {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.app__loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+    animation: loading-scan 1.5s infinite linear;
+    z-index: 20;
+}
+
+@keyframes loading-scan {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .app {
+        flex-direction: column;
+    }
+
+    .app__sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 40vh;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .app__main {
+        height: 60vh;
+    }
+}
