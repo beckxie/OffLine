@@ -2,7 +2,7 @@
 
 一個注重隱私、完全離線的 LINE 聊天記錄搜尋與瀏覽工具。
 
-![App Icon](public/pwa-192x192.png)
+![Project Banner](public/project_banner.png)
 
 ## ✨ 特色功能
 
