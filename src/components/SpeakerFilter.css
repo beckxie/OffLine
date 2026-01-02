@@ -1,0 +1,108 @@
+.speaker-filter {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    max-height: 300px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .speaker-filter {
+        background: var(--color-surface-dark);
+        border-color: var(--color-border-dark);
+    }
+}
+
+.speaker-filter__title {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+}
+
+@media (prefers-color-scheme: dark) {
+    .speaker-filter__title {
+        color: var(--color-text-secondary-dark);
+    }
+}
+
+.speaker-filter__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    overflow-y: auto;
+    padding-right: var(--spacing-xs);
+    /* Custom scrollbar for inner list */
+}
+
+.speaker-filter__list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.speaker-filter__item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-fast);
+}
+
+.speaker-filter__item:hover {
+    background: var(--color-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+    .speaker-filter__item:hover {
+        background: var(--color-bg-dark);
+    }
+}
+
+.speaker-filter__checkbox {
+    accent-color: var(--color-primary);
+    width: 16px;
+    height: 16px;
+}
+
+.speaker-filter__label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (prefers-color-scheme: dark) {
+    .speaker-filter__label {
+        color: var(--color-text-dark);
+    }
+}
+
+.speaker-filter__reset {
+    margin-top: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+    color: var(--color-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    align-self: flex-start;
+}
+
+@media (prefers-color-scheme: dark) {
+    .speaker-filter__reset {
+        border-color: var(--color-border-dark);
+    }
+}
+
+.speaker-filter__reset:hover {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
