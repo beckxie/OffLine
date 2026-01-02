@@ -1,8 +1,8 @@
 # OffLine
 
-一個注重隱私、完全離線的 LINE 聊天記錄搜尋與瀏覽工具。採用 Apple 風格的現代化介面設計，提供流暢的搜尋體驗。
+一個注重隱私、完全離線的 LINE 聊天記錄搜尋與瀏覽工具。
 
-![App Icon](public/pwa-512x512.png)
+![App Icon](public/pwa-192x192.png)
 
 ## ✨ 特色功能
 
@@ -38,8 +38,8 @@
 
 1.  複製專案
     ```bash
-    git clone https://github.com/beckxie/line-search.git
-    cd line-search
+    git clone https://github.com/beckxie/OffLine.git
+    cd OffLine
     ```
 
 2.  安裝依賴
