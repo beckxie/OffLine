@@ -5,33 +5,44 @@ import { Message, ChatFile } from '../types';
  * 支援 LINE 匯出的 .txt 格式
  */
 
-// 日期標題行正則：2022/03/31（四）
-const DATE_HEADER_REGEX = /^(\d{4})\/(\d{2})\/(\d{2})（[一二三四五六日]）\s*$/;
+// 日期標題行正則：
+// Mobile: 2022/03/31（四）
+// PC: 2025.02.15 星期六
+const DATE_HEADER_REGEX = /^(\d{4})[\/.](\d{2})[\/.](\d{2})(?:(?:（([一二三四五六日])）)|(?:\s+星期([一二三四五六日])))?\s*$/;
 
-// 訊息行正則：時間\t發言人\t內容
-const MESSAGE_REGEX = /^(上午|下午)(\d{1,2}):(\d{2})\t([^\t]*)\t(.*)$/;
+// 訊息行正則：(上午|下午)?時:分\t(發言人\t)?內容
+// Mobile: 上午09:46\tSender\tContent
+// PC (Tab): 17:22\tSender\tContent OR 08:26\tSystemContent
+const MESSAGE_REGEX_TAB = /^(?:(上午|下午))?(\d{1,2}):(\d{2})\t(?:([^\t]*)\t)?(.*)$/;
+
+// PC (Space): 17:22 Sender Content OR 08:26 SystemContent
+// Fallback for when tabs are converted to spaces
+const MESSAGE_REGEX_SPACE = /^(?:(上午|下午))?(\d{1,2}):(\d{2})\s+(?:([^\s]+)\s+)?(.*)$/;
 
 // 儲存日期正則：儲存日期： 2026/01/03 01:14
-const EXPORT_DATE_REGEX = /^儲存日期[：:]\s*(\d{4})\/(\d{2})\/(\d{2})\s+(\d{2}):(\d{2})\s*$/;
+const EXPORT_DATE_REGEX = /^儲存日期[：:]\s*(\d{4})[\/.](\d{2})[\/.](\d{2})\s+(\d{2}):(\d{2})\s*$/;
 
 /**
  * 解析時間字串為 Date 物件
  */
 function parseTime(
     dateBase: Date,
-    ampm: string,
+    ampm: string | undefined,
     hour: string,
     minute: string
 ): Date {
     let h = parseInt(hour, 10);
     const m = parseInt(minute, 10);
 
-    // 轉換為 24 小時制
-    if (ampm === '下午' && h !== 12) {
-        h += 12;
-    } else if (ampm === '上午' && h === 12) {
-        h = 0;
+    // 處理 12 小時制
+    if (ampm) {
+        if (ampm === '下午' && h !== 12) {
+            h += 12;
+        } else if (ampm === '上午' && h === 12) {
+            h = 0;
+        }
     }
+    // 24 小時制直接使用 parsed hour
 
     const result = new Date(dateBase);
     result.setHours(h, m, 0, 0);
@@ -52,7 +63,7 @@ export function parseLineChatFile(
     const messages: Message[] = [];
     const speakerSet = new Set<string>();
 
-    let groupName = '';
+    let groupName = '未命名聊天室';
     let exportDate: Date | null = null;
     let currentDate: Date | null = null;
     let messageId = 0;
@@ -73,14 +84,15 @@ export function parseLineChatFile(
             onProgress(Math.round((i / totalLines) * 100));
         }
 
-        // 第一行：群組名稱
-        if (i === 0) {
-            groupName = line.replace(/^\[LINE\]\s*/, '').trim();
-            continue;
-        }
+        // 嘗試解析 metadata (僅在前幾行)
+        if (i < 5) {
+            // 群組名稱 (以 [LINE] 開頭)
+            if (line.startsWith('[LINE]')) {
+                groupName = line.replace(/^\[LINE\]\s*/, '').trim();
+                continue;
+            }
 
-        // 第二行：儲存日期
-        if (i === 1) {
+            // 儲存日期
             const exportMatch = line.match(EXPORT_DATE_REGEX);
             if (exportMatch) {
                 exportDate = new Date(
@@ -90,8 +102,8 @@ export function parseLineChatFile(
                     parseInt(exportMatch[4], 10),
                     parseInt(exportMatch[5], 10)
                 );
+                continue;
             }
-            continue;
         }
 
         // 空行
@@ -111,7 +123,11 @@ export function parseLineChatFile(
         }
 
         // 訊息行
-        const msgMatch = line.match(MESSAGE_REGEX);
+        let msgMatch = line.match(MESSAGE_REGEX_TAB);
+        if (!msgMatch) {
+            msgMatch = line.match(MESSAGE_REGEX_SPACE);
+        }
+
         if (msgMatch && currentDate) {
             // 如果有未完成的多行訊息，先儲存
             if (pendingMessage) {
@@ -123,38 +139,49 @@ export function parseLineChatFile(
                 pendingMessage = null;
             }
 
-            const [, ampm, hour, minute, author, content] = msgMatch;
+            const [, ampm, hour, minute, rawAuthor, content] = msgMatch;
             const timestamp = parseTime(currentDate, ampm, hour, minute);
-            const isSystemMessage = author === '';
+
+            // 判斷是否為系統訊息
+            // Mobile system msg: time\t\tcontent (rawAuthor is empty string)
+            // PC system msg: time\tcontent (rawAuthor is undefined)
+            const isSystemMessage = rawAuthor === undefined || rawAuthor === '';
+
+            // 決定顯示的 author 和 content
+            // 如果是系統訊息，Author 欄位通常顯示內容，Content 欄位留空(或依 UI 需求調整)
+            // 這裡保持與原始邏輯一致：系統訊息內容放在 Author，Content 為空
+            // 但若是 PC 版 time\tcontent，content 變數已經抓到了內容
+            const finalAuthor = isSystemMessage ? content : rawAuthor;
+            const finalContent = isSystemMessage ? '' : content;
 
             // 收集發言人
-            if (author && !isSystemMessage) {
-                speakerSet.add(author);
+            if (!isSystemMessage && finalAuthor) {
+                speakerSet.add(finalAuthor);
             }
 
             messageId++;
 
-            // 檢查是否為多行訊息開頭
-            if (content.startsWith('"') && !content.endsWith('"')) {
+            // 檢查是否為多行訊息開頭 (僅針對非系統訊息且有引號包圍的內容)
+            if (!isSystemMessage && finalContent.startsWith('"') && !finalContent.endsWith('"')) {
                 pendingMessage = {
                     id: messageId,
                     timestamp,
-                    author: isSystemMessage ? content : author,
-                    content: content.slice(1), // 移除開頭引號
+                    author: finalAuthor,
+                    content: finalContent.slice(1), // 移除開頭引號
                 };
             } else {
                 // 單行訊息
-                let finalContent = content;
+                let cleanContent = finalContent;
                 // 移除完整引號包圍
-                if (content.startsWith('"') && content.endsWith('"')) {
-                    finalContent = content.slice(1, -1);
+                if (!isSystemMessage && finalContent.startsWith('"') && finalContent.endsWith('"')) {
+                    cleanContent = finalContent.slice(1, -1);
                 }
 
                 messages.push({
                     id: messageId,
                     timestamp,
-                    author: isSystemMessage ? finalContent : author,
-                    content: isSystemMessage ? '' : finalContent,
+                    author: finalAuthor,
+                    content: cleanContent,
                     isSystemMessage,
                 });
             }
@@ -172,7 +199,7 @@ export function parseLineChatFile(
                 });
                 pendingMessage = null;
             } else {
-                // 多行訊息中間
+                // 多行訊息中間 (保留完整 line)
                 pendingMessage.content += '\n' + line;
             }
         }
