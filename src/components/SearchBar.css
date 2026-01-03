@@ -12,57 +12,76 @@
 
 .search-bar__icon {
     position: absolute;
-    left: 10px;
-    font-size: 14px;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
     color: var(--color-text-secondary);
     pointer-events: none;
+    display: flex;
+    /* Centering SVG */
+    opacity: 0.6;
 }
 
 .search-bar__input {
     width: 100%;
-    padding: 8px 10px 8px 30px;
-    font-size: 14px;
+    padding: 7px 10px 7px 28px;
+    /* Compact height (approx 32-34px) */
+    font-size: 13px;
+    /* Standard system-ui size */
     border: none;
-    border-radius: 8px;
-    /* iOS style rounded corners */
-    background: rgba(0, 0, 0, 0.05);
-    /* Soft gray */
+    border-radius: 10px;
+    /* iOS standard is 10px or pill */
+    background: rgba(118, 118, 128, 0.12);
+    /* iOS system gray fill */
     color: var(--color-text);
     transition: all 0.2s;
 }
 
 @media (prefers-color-scheme: dark) {
     .search-bar__input {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(118, 118, 128, 0.24);
     }
 }
 
 .search-bar__input:focus {
     outline: none;
-    background: rgba(0, 0, 0, 0.08);
-    box-shadow: 0 0 0 2px var(--color-primary-light);
+    background: rgba(118, 118, 128, 0.12);
+    /* Keep background mostly same */
+    box-shadow: 0 0 0 2px var(--color-primary);
+    /* Use primary color for ring? Or minimal? */
+    /* Often iOS just shows cursor, but web focus needs indicator. Let's start with primary ring. */
 }
 
 @media (prefers-color-scheme: dark) {
     .search-bar__input:focus {
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(118, 118, 128, 0.24);
     }
 }
 
 .search-bar__clear {
     position: absolute;
     right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
     width: 16px;
     height: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #8e8e93;
+    background: transparent;
+    /* SVG handles fill */
     border: none;
-    border-radius: 50%;
-    color: white;
+    padding: 0;
+    color: var(--color-text-secondary);
+    /* or #8e8e93 */
     cursor: pointer;
-    font-size: 10px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.search-bar__clear:hover {
+    opacity: 1;
+    color: var(--color-text);
 }
 
 .search-bar__result {

@@ -7,7 +7,10 @@
     /* Seamless integration in sidebar */
     padding: 0;
     border: none;
-    max-height: 400px;
+    flex: 1;
+    /* Fill available space */
+    min-height: 0;
+    /* Allow shrinking for scroll inside */
 }
 
 .speaker-filter__title {
@@ -99,10 +102,11 @@
 /* Custom Checkbox */
 .speaker-filter__checkbox {
     appearance: none;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border: 1.5px solid var(--color-text-secondary);
-    border-radius: 50%;
+    border-radius: 4px;
+    /* Soft square for Checkbox */
     position: relative;
     transition: all 0.2s;
     flex-shrink: 0;

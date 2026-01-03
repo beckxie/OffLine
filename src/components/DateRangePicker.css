@@ -47,6 +47,51 @@
     text-decoration: underline;
 }
 
+.date-range-picker__presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.date-range-picker__preset-btn {
+    font-size: 13px;
+    /* Slightly larger text */
+    padding: 6px 12px;
+    /* Larger touch target */
+    background: rgba(118, 118, 128, 0.12);
+    /* Apple system gray fill */
+    border: none;
+    border-radius: 14px;
+    /* Pill shape */
+    color: var(--color-text);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.date-range-picker__preset-btn:hover {
+    background: rgba(118, 118, 128, 0.24);
+    /* Darker gray on hover */
+    /* Remove white text on hover to keep it subtle like iOS "gray" buttons */
+    /* Or keep primary hook? Let's use primary background for hover to show action. */
+    background: var(--color-primary);
+    color: white;
+}
+
+@media (prefers-color-scheme: dark) {
+    .date-range-picker__preset-btn {
+        background: rgba(118, 118, 128, 0.24);
+        color: var(--color-text-dark);
+    }
+
+    .date-range-picker__preset-btn:hover {
+        background: var(--color-primary);
+        color: white;
+    }
+}
+
+
 .date-range-picker__inputs {
     display: flex;
     gap: var(--spacing-md);
