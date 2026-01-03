@@ -1,8 +1,39 @@
 /* Message List Container */
 .message-list {
     flex: 1;
+    height: 100%;
     background: transparent;
     width: 100%;
+    position: relative;
+    /* For sticky header positioning */
+}
+
+.message-list__sticky-date {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    color: var(--color-text-secondary);
+    background: rgba(255, 255, 255, 0.85);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    pointer-events: none;
+    /* Let clicks pass through */
+    transition: all 0.2s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+    .message-list__sticky-date {
+        background: rgba(30, 30, 30, 0.8);
+        color: #ddd;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
 }
 
 .message-list__empty {
