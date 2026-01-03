@@ -35,6 +35,7 @@ function App() {
     const [sidebarWidth, setSidebarWidth] = useState(320);
     const [isResizing, setIsResizing] = useState(false);
     const sidebarRef = useRef<HTMLElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const startResizing = useCallback(() => setIsResizing(true), []);
     const stopResizing = useCallback(() => setIsResizing(false), []);
@@ -77,13 +78,14 @@ function App() {
         setLoadingProgress(0);
         try {
             const content = await readFileAsText(file);
-            setTimeout(() => {
-                const parsed = parseLineChatFile(content, (progress) => {
-                    setLoadingProgress(progress);
-                });
-                setChatFile(parsed);
-                setIsLoading(false);
-            }, 50);
+            // Add small delay to show loading state initially
+            await new Promise(resolve => setTimeout(resolve, 50));
+
+            const parsed = await parseLineChatFile(content, (progress) => {
+                setLoadingProgress(progress);
+            });
+            setChatFile(parsed);
+            setIsLoading(false);
         } catch (error) {
             console.error('File reading failed', error);
             alert('檔案讀取失敗，請確認檔案格式是否正確。');
@@ -129,6 +131,20 @@ function App() {
 
     return (
         <div className="app">
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                        handleFileSelect(file);
+                        // Reset input so same file can be selected again
+                        e.target.value = '';
+                    }
+                }}
+                accept=".txt"
+                style={{ display: 'none' }}
+            />
             <aside
                 className="app__sidebar"
                 style={{ width: sidebarWidth }}
@@ -136,12 +152,25 @@ function App() {
             >
                 <div className="app__sidebar-header">
                     <button
-                        className="app__home-button"
+                        className="app__icon-button"
                         onClick={() => setChatFile(null)}
                         title="回到首頁"
                         aria-label="回到首頁"
                     >
-                        ←
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                    </button>
+                    <button
+                        className="app__icon-button"
+                        onClick={() => fileInputRef.current?.click()}
+                        title="開啟其他檔案"
+                        aria-label="開啟其他檔案"
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                        </svg>
                     </button>
                     <div className="app__sidebar-title-wrapper">
                         <h2 className="app__group-name">{chatFile.groupName}</h2>
@@ -150,6 +179,18 @@ function App() {
                         </div>
                     </div>
                 </div>
+
+                {isLoading && (
+                    <div className="app__sidebar-loading">
+                        <div className="app__sidebar-progress">
+                            <div
+                                className="app__sidebar-progress-fill"
+                                style={{ width: `${loadingProgress}%` }}
+                            />
+                        </div>
+                        <p className="app__sidebar-loading-text">解析中... {loadingProgress}%</p>
+                    </div>
+                )}
 
                 <div className="app__filters">
                     <SearchBar

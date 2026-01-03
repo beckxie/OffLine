@@ -35,7 +35,7 @@
     min-height: 60px;
 }
 
-.app__home-button {
+.app__icon-button {
     background: transparent;
     border: none;
     border-radius: 6px;
@@ -46,18 +46,22 @@
     justify-content: center;
     cursor: pointer;
     color: var(--color-primary);
-    font-size: 1.2rem;
     transition: background 0.2s;
 }
 
-.app__home-button:hover {
+.app__icon-button:hover {
     background: rgba(0, 0, 0, 0.05);
 }
 
 @media (prefers-color-scheme: dark) {
-    .app__home-button:hover {
+    .app__icon-button:hover {
         background: rgba(255, 255, 255, 0.1);
     }
+}
+
+.app__home-button {
+    font-size: 1.2rem;
+    /* Specific adjustment for arrow if needed, but icon-button covers base */
 }
 
 .app__sidebar-title-wrapper {
@@ -172,6 +176,43 @@
     background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
     animation: loading-scan 1s infinite linear;
     z-index: 100;
+}
+
+/* Sidebar Loading Overlay */
+.app__sidebar-loading {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--color-primary-light);
+    border-radius: var(--radius-md);
+    margin: 0 16px;
+}
+
+.app__sidebar-progress {
+    height: 6px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+    .app__sidebar-progress {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+.app__sidebar-progress-fill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+    transition: width 0.2s ease-out;
+}
+
+.app__sidebar-loading-text {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    text-align: center;
 }
 
 @keyframes loading-scan {
