@@ -54,10 +54,10 @@ function parseTime(
  * @param content 檔案內容字串
  * @param onProgress 進度回調 (0-100)
  */
-export function parseLineChatFile(
+export async function parseLineChatFile(
     content: string,
     onProgress?: (progress: number) => void
-): ChatFile {
+): Promise<ChatFile> {
     const lines = content.split(/\r?\n/);
     const totalLines = lines.length;
     const messages: Message[] = [];
@@ -79,9 +79,15 @@ export function parseLineChatFile(
     for (let i = 0; i < totalLines; i++) {
         const line = lines[i];
 
-        // 進度回報
-        if (onProgress && i % 1000 === 0) {
-            onProgress(Math.round((i / totalLines) * 100));
+        // 進度回報與讓步 (Yield to UI)
+        if (i % 2000 === 0) {
+            if (onProgress) {
+                onProgress(Math.round((i / totalLines) * 100));
+            }
+            if (i > 0) {
+                // Yield to main thread
+                await new Promise((resolve) => setTimeout(resolve, 0));
+            }
         }
 
         // 嘗試解析 metadata (僅在前幾行)

@@ -15,15 +15,15 @@ const SAMPLE_CHAT = `[LINE] 測試群組
 `;
 
 describe('lineParser', () => {
-    it('should parse metadata correctly', () => {
-        const result = parseLineChatFile(SAMPLE_CHAT);
+    it('should parse metadata correctly', async () => {
+        const result = await parseLineChatFile(SAMPLE_CHAT);
         expect(result.groupName).toBe('測試群組');
         expect(result.exportDate).toBeInstanceOf(Date);
         expect(result.exportDate?.getFullYear()).toBe(2026);
     });
 
-    it('should parse normal messages', () => {
-        const result = parseLineChatFile(SAMPLE_CHAT);
+    it('should parse normal messages', async () => {
+        const result = await parseLineChatFile(SAMPLE_CHAT);
         const msgs = result.messages;
         expect(msgs.length).toBe(5);
 
@@ -33,8 +33,8 @@ describe('lineParser', () => {
         expect(msgs[0].timestamp.getMinutes()).toBe(46);
     });
 
-    it('should parse multi-line messages', () => {
-        const result = parseLineChatFile(SAMPLE_CHAT);
+    it('should parse multi-line messages', async () => {
+        const result = await parseLineChatFile(SAMPLE_CHAT);
         const multiLineMsg = result.messages[2];
 
         expect(multiLineMsg.author).toBe('UserC');
@@ -45,8 +45,8 @@ describe('lineParser', () => {
         expect(multiLineMsg.content).not.toMatch(/"$/);
     });
 
-    it('should parse system messages', () => {
-        const result = parseLineChatFile(SAMPLE_CHAT);
+    it('should parse system messages', async () => {
+        const result = await parseLineChatFile(SAMPLE_CHAT);
         const systemMsg = result.messages[4];
 
         expect(systemMsg.isSystemMessage).toBe(true);
@@ -54,8 +54,8 @@ describe('lineParser', () => {
         expect(systemMsg.author).toBe('System Message');
     });
 
-    it('should collect unique speakers', () => {
-        const result = parseLineChatFile(SAMPLE_CHAT);
+    it('should collect unique speakers', async () => {
+        const result = await parseLineChatFile(SAMPLE_CHAT);
         expect(result.speakers).toContain('UserA');
         expect(result.speakers).toContain('UserB');
         expect(result.speakers).toContain('UserC');
@@ -64,8 +64,8 @@ describe('lineParser', () => {
         expect(result.speakers.length).toBe(4);
     });
 
-    it('should calculate date range', () => {
-        const result = parseLineChatFile(SAMPLE_CHAT);
+    it('should calculate date range', async () => {
+        const result = await parseLineChatFile(SAMPLE_CHAT);
         expect(result.dateRange.start).toBeInstanceOf(Date);
         expect(result.dateRange.end).toBeInstanceOf(Date);
     });
@@ -79,8 +79,8 @@ const PC_SAMPLE_CHAT = `2025.02.15 星期六
 `;
 
 describe('lineParser (PC Format)', () => {
-    it('should parse PC format metadata and messages', () => {
-        const result = parseLineChatFile(PC_SAMPLE_CHAT);
+    it('should parse PC format metadata and messages', async () => {
+        const result = await parseLineChatFile(PC_SAMPLE_CHAT);
         // Should parse date
         expect(result.messages.length).toBeGreaterThan(0);
         expect(result.messages[0].timestamp.getFullYear()).toBe(2025);
