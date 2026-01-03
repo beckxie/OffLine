@@ -2,6 +2,7 @@
   "name": "offline",
   "private": true,
   "version": "0.0.1",
+  "description": "A secure, offline-first LINE chat history viewer with Apple-style aesthetics.",
   "type": "module",
   "scripts": {
     "dev": "vite",
