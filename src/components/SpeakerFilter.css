@@ -67,6 +67,8 @@
     gap: 2px;
     overflow-y: auto;
     flex: 1;
+    min-height: 100px;
+    /* Prevent height collapse on mobile */
     background: var(--color-surface);
     /* Grouped List Look */
     border-radius: 12px;
