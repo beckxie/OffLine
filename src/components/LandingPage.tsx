@@ -80,21 +80,21 @@ export function LandingPage({ onFileSelect, isLoading, progress }: LandingPagePr
 
                 {/* Features */}
                 <section className="landing__features">
-                    <div className="landing__feature">
+                    <div className="landing__feature glass">
                         <span className="landing__feature-icon">🔒</span>
                         <div className="landing__feature-text">
                             <strong>完全離線</strong>
                             <span>資料不會上傳至任何伺服器</span>
                         </div>
                     </div>
-                    <div className="landing__feature">
+                    <div className="landing__feature glass">
                         <span className="landing__feature-icon">⚡</span>
                         <div className="landing__feature-text">
                             <strong>快速搜尋</strong>
                             <span>支援大型聊天記錄檔案</span>
                         </div>
                     </div>
-                    <div className="landing__feature">
+                    <div className="landing__feature glass">
                         <span className="landing__feature-icon">🎯</span>
                         <div className="landing__feature-text">
                             <strong>精準篩選</strong>
@@ -135,6 +135,7 @@ export function LandingPage({ onFileSelect, isLoading, progress }: LandingPagePr
                                     accept=".txt"
                                     onChange={handleFileChange}
                                     className="visually-hidden"
+                                    aria-label="選擇 LINE 聊天記錄檔案"
                                 />
                             </label>
                         </>
