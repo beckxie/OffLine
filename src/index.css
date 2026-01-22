@@ -127,27 +127,101 @@ body {
 }
 
 /* Scrollbar styling for a cleaner look */
+
 ::-webkit-scrollbar {
+
   width: 10px;
+
   height: 10px;
+
 }
+
+
 
 ::-webkit-scrollbar-track {
+
   background: transparent;
+
 }
+
+
 
 ::-webkit-scrollbar-thumb {
+
   background: rgba(128, 128, 128, 0.3);
+
   border-radius: var(--radius-full);
+
   border: 2px solid transparent;
+
   background-clip: content-box;
+
 }
+
+
 
 ::-webkit-scrollbar-thumb:hover {
+
   background-color: rgba(128, 128, 128, 0.5);
+
 }
 
+
+
+/* Standard scrollbar properties for Firefox */
+
+* {
+
+  scrollbar-width: thin;
+
+  scrollbar-color: rgba(128, 128, 128, 0.3) transparent;
+
+}
+
+
+
+/* Accessibility: Focus Rings */
+
+:focus-visible {
+
+  outline: 2px solid var(--color-primary);
+
+  outline-offset: 2px;
+
+}
+
+
+
+/* Global button/interactive element transitions */
+
 button,
+
+.landing__upload,
+
+.landing__upload-button,
+
+.app__icon-button {
+
+  transition: all var(--transition-fast);
+
+}
+
+
+
+button:active,
+
+.landing__upload-button:active {
+
+  transform: scale(0.96);
+
+}
+
+
+
+button,
+
 input {
+
   font-family: inherit;
+
 }

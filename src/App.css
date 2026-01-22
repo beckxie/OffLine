@@ -46,11 +46,15 @@
     justify-content: center;
     cursor: pointer;
     color: var(--color-primary);
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.1s;
 }
 
 .app__icon-button:hover {
     background: rgba(0, 0, 0, 0.05);
+}
+
+.app__icon-button:active {
+    transform: scale(0.92);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -183,10 +187,11 @@
     padding: 16px 20px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     background: var(--color-primary-light);
     border-radius: var(--radius-md);
     margin: 0 16px;
+    border: 1px solid rgba(52, 199, 89, 0.1);
 }
 
 .app__sidebar-progress {
@@ -197,6 +202,10 @@
 }
 
 @media (prefers-color-scheme: dark) {
+    .app__sidebar-loading {
+        background: rgba(48, 209, 88, 0.1);
+        border: 1px solid rgba(48, 209, 88, 0.2);
+    }
     .app__sidebar-progress {
         background: rgba(255, 255, 255, 0.1);
     }
@@ -211,8 +220,15 @@
 
 .app__sidebar-loading-text {
     font-size: 13px;
-    color: var(--color-text-secondary);
+    font-weight: 500;
+    color: var(--color-primary-dark);
     text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+    .app__sidebar-loading-text {
+        color: var(--color-primary);
+    }
 }
 
 @keyframes loading-scan {
