@@ -26,7 +26,24 @@ function MessageListInner({
   width,
 }: MessageListInnerProps) {
   const listRef = useRef<List>(null);
+  const dateInputRef = useRef<HTMLInputElement>(null);
   const [stickyDate, setStickyDate] = useState<string>('');
+
+  // 1. Build Date Map for O(1) lookup
+  // Map<"YYYY-MM-DD", index>
+  const dateToIndexMap = useMemo(() => {
+    const map = new Map<string, number>();
+    let lastDateStr = '';
+    
+    messages.forEach((msg, index) => {
+      const dateStr = msg.timestamp.toISOString().split('T')[0];
+      if (dateStr !== lastDateStr) {
+        map.set(dateStr, index);
+        lastDateStr = dateStr;
+      }
+    });
+    return map;
+  }, [messages]);
 
   // Reset cache on size change
   useEffect(() => {
@@ -61,6 +78,57 @@ function MessageListInner({
       }
     },
     [messages]
+  );
+
+  const handleDateClick = useCallback(() => {
+    // Programmatically open the date picker
+    if (dateInputRef.current && 'showPicker' in HTMLInputElement.prototype) {
+        try {
+            dateInputRef.current.showPicker();
+        } catch (error) {
+            // Fallback for browsers not supporting showPicker (rare now)
+            dateInputRef.current.focus();
+            dateInputRef.current.click();
+        }
+    } else {
+        dateInputRef.current?.click();
+    }
+  }, []);
+
+  const handleDateChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedDate = e.target.value; // YYYY-MM-DD
+        if (!selectedDate || !listRef.current) return;
+
+        // Find the exact date or the next available date
+        let targetIndex = -1;
+        
+        // Check exact match
+        if (dateToIndexMap.has(selectedDate)) {
+            targetIndex = dateToIndexMap.get(selectedDate)!;
+        } else {
+            // Find the closest next date
+            // Since map keys insertion order is chronological for sorted messages
+            // we can just iterate to find the first one >= selectedDate
+            for (const [dateStr, index] of dateToIndexMap) {
+                if (dateStr >= selectedDate) {
+                    targetIndex = index;
+                    break;
+                }
+            }
+        }
+
+        if (targetIndex !== -1) {
+            listRef.current.scrollToItem(targetIndex, 'start');
+        } else {
+            // If date is after all messages, scroll to end
+            listRef.current.scrollToItem(messages.length - 1, 'end');
+        }
+        
+        // Reset input so the same date can be selected again if needed (though unlikely)
+        e.target.value = '';
+    },
+    [dateToIndexMap, messages.length]
   );
 
   const getMessageDisplayInfo = useCallback((index: number) => {
@@ -150,12 +218,36 @@ function MessageListInner({
     );
   }
 
+  // Min and Max dates for the picker
+  const minDate = dateToIndexMap.size > 0 ? messages[0].timestamp.toISOString().split('T')[0] : undefined;
+  const maxDate = dateToIndexMap.size > 0 ? messages[messages.length - 1].timestamp.toISOString().split('T')[0] : undefined;
+
   return (
     <>
       {stickyDate && (
-        <div className="message-list__sticky-date">
-          {stickyDate}
-        </div>
+        <>
+            <button 
+                className="message-list__sticky-date"
+                onClick={handleDateClick}
+                aria-label="選擇日期跳轉"
+                title="點擊跳轉至特定日期"
+            >
+                {stickyDate}
+                <svg className="message-list__sticky-date-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
+            <input
+                ref={dateInputRef}
+                type="date"
+                className="message-list__hidden-date-picker"
+                onChange={handleDateChange}
+                min={minDate}
+                max={maxDate}
+                aria-hidden="true"
+                tabIndex={-1}
+            />
+        </>
       )}
       <List
         ref={listRef}
