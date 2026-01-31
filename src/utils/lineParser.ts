@@ -58,9 +58,8 @@ export async function parseLineChatFile(
     content: string,
     onProgress?: (progress: number) => void
 ): Promise<ChatFile> {
-    const lines = content.split(/\r?\n/);
-    const totalLines = lines.length;
-    const messages: Message[] = [];
+    const totalLen = content.length;
+    let messages: Message[] = [];
     const speakerSet = new Set<string>();
 
     let groupName = '未命名聊天室';
@@ -76,13 +75,30 @@ export async function parseLineChatFile(
         content: string;
     } | null = null;
 
-    for (let i = 0; i < totalLines; i++) {
-        const line = lines[i];
+    let lineStart = 0;
+    let lineIndex = 0;
+
+    while (lineStart < totalLen) {
+        let lineEnd = content.indexOf('\n', lineStart);
+        if (lineEnd === -1) {
+            lineEnd = totalLen;
+        }
+
+        // Get line content, handling CR if present
+        let line = content.slice(lineStart, lineEnd);
+        if (line.endsWith('\r')) {
+            line = line.slice(0, -1);
+        }
+
+        const i = lineIndex;
+        lineIndex++;
+        lineStart = lineEnd + 1;
 
         // 進度回報與讓步 (Yield to UI)
         if (i % 2000 === 0) {
             if (onProgress) {
-                onProgress(Math.round((i / totalLines) * 100));
+                // Use position in file for more accurate progress
+                onProgress(Math.round((lineStart / totalLen) * 100));
             }
             if (i > 0) {
                 // Yield to main thread
@@ -216,6 +232,7 @@ export async function parseLineChatFile(
         messages.push({
             ...pendingMessage,
             isSystemMessage: false,
+            // @ts-ignore
         });
     }
 

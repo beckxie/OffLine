@@ -1,0 +1,129 @@
+.memory-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.memory-modal {
+    width: 90%;
+    max-width: 400px;
+    padding: 32px 24px;
+    border-radius: 24px;
+    background: var(--color-surface-translucent); /* Fallback */
+    /* Glass styles are applied by .glass class globally, but we reinforce here */
+    background: rgba(255, 255, 255, 0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@media (prefers-color-scheme: dark) {
+    .memory-modal {
+        background: rgba(30, 30, 30, 0.85);
+    }
+}
+
+.memory-modal__icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.memory-modal__title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--color-text);
+}
+
+.memory-modal__text {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.memory-modal__text strong {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.memory-modal__subtext {
+    font-size: 13px;
+    color: var(--color-primary);
+    margin-bottom: 24px;
+    font-weight: 500;
+}
+
+.memory-modal__actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+}
+
+.memory-modal__btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.memory-modal__btn--cancel {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--color-text);
+}
+
+.memory-modal__btn--confirm {
+    background: var(--color-primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+}
+
+.memory-modal__btn:hover {
+    transform: translateY(-1px);
+}
+
+.memory-modal__btn:active {
+    transform: scale(0.96);
+}
+
+/* Progress Bar at bottom */
+.memory-modal__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: var(--color-primary);
+    width: 100%;
+    transform-origin: left;
+    animation-name: progressShrink;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes progressShrink {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
