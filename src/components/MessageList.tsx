@@ -90,7 +90,7 @@ function MessageListInner({
     if (dateInputRef.current && 'showPicker' in HTMLInputElement.prototype) {
       try {
         dateInputRef.current.showPicker();
-      } catch (error) {
+      } catch {
         // Fallback for browsers not supporting showPicker (rare now)
         dateInputRef.current.focus();
         dateInputRef.current.click();
