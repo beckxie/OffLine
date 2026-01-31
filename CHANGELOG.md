@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2026-01-31
+
+### Added
+- **ESLint Configuration**: Implemented ESLint v9 flat configuration (`eslint.config.js`) to restore CI verification.
+
+### Fixed
+- **CI Failure**: Resolved issues that caused GitHub Actions to fail.
+- **Linting Issues**: Fixed 8 code quality warnings involving regex escaping, unused variables, and type safety in `lineParser.ts`, `MessageList.tsx`, and `useMemoryStatus.ts`.
+
 ## [0.1.0] - 2026-01-31
 
 ### Added

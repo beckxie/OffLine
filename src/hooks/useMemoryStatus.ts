@@ -15,7 +15,13 @@ export function useMemoryStatus() {
 
   useEffect(() => {
     // Check if performance.memory is supported (Chrome/Edge)
-    const perf = (performance as any).memory;
+    interface PerformanceWithMemory {
+      memory?: {
+        usedJSHeapSize: number;
+        jsHeapSizeLimit: number;
+      };
+    }
+    const perf = (performance as unknown as PerformanceWithMemory).memory;
     if (!perf) return;
 
     const updateMemory = () => {

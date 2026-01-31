@@ -8,7 +8,9 @@ import { Message, ChatFile } from '../types';
 // 日期標題行正則：
 // Mobile: 2022/03/31（四）
 // PC: 2025.02.15 星期六
-const DATE_HEADER_REGEX = /^(\d{4})[\/.](\d{2})[\/.](\d{2})(?:(?:（([一二三四五六日])）)|(?:\s+星期([一二三四五六日])))?\s*$/;
+// Mobile: 2022/03/31（四）
+// PC: 2025.02.15 星期六
+const DATE_HEADER_REGEX = new RegExp('^(\\d{4})[/.](\\d{2})[/.](\\d{2})(?:(?:（([一二三四五六日])）)|(?:\\s+星期([一二三四五六日])))?\\s*$');
 
 // 訊息行正則：(上午|下午)?時:分\t(發言人\t)?內容
 // Mobile: 上午09:46\tSender\tContent
@@ -20,7 +22,8 @@ const MESSAGE_REGEX_TAB = /^(?:(上午|下午))?(\d{1,2}):(\d{2})\t(?:([^\t]*)\t
 const MESSAGE_REGEX_SPACE = /^(?:(上午|下午))?(\d{1,2}):(\d{2})\s+(?:([^\s]+)\s+)?(.*)$/;
 
 // 儲存日期正則：儲存日期： 2026/01/03 01:14
-const EXPORT_DATE_REGEX = /^儲存日期[：:]\s*(\d{4})[\/.](\d{2})[\/.](\d{2})\s+(\d{2}):(\d{2})\s*$/;
+// 儲存日期正則：儲存日期： 2026/01/03 01:14
+const EXPORT_DATE_REGEX = new RegExp('^儲存日期[：:]\\s*(\\d{4})[/.](\\d{2})[/.](\\d{2})\\s+(\\d{2}):(\\d{2})\\s*$');
 
 /**
  * 解析時間字串為 Date 物件
@@ -59,7 +62,7 @@ export async function parseLineChatFile(
     onProgress?: (progress: number) => void
 ): Promise<ChatFile> {
     const totalLen = content.length;
-    let messages: Message[] = [];
+    const messages: Message[] = [];
     const speakerSet = new Set<string>();
 
     let groupName = '未命名聊天室';
@@ -232,7 +235,6 @@ export async function parseLineChatFile(
         messages.push({
             ...pendingMessage,
             isSystemMessage: false,
-            // @ts-ignore
         });
     }
 

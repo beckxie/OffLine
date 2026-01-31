@@ -3,8 +3,13 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+import { version } from './package.json'
+
 // https://vitejs.dev/config/
 export default defineConfig({
+    define: {
+        'import.meta.env.VITE_APP_VERSION': JSON.stringify(version)
+    },
     base: './', // Relative base path for GitHub Pages compatibility
     plugins: [
         react(),
@@ -33,6 +38,7 @@ export default defineConfig({
             }
         })
     ],
+    // @ts-expect-error - vitest types not automatically augmenting vite
     test: {
         globals: true,
         environment: 'jsdom',
