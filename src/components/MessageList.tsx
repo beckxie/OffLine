@@ -34,7 +34,7 @@ function MessageListInner({
   const dateToIndexMap = useMemo(() => {
     const map = new Map<string, number>();
     let lastDateStr = '';
-    
+
     messages.forEach((msg, index) => {
       const dateStr = msg.timestamp.toISOString().split('T')[0];
       if (dateStr !== lastDateStr) {
@@ -53,15 +53,20 @@ function MessageListInner({
   }, [width, messages]);
 
   // Scroll to specific message
+  // Scroll to specific message OR scroll to bottom on load
   useEffect(() => {
-    if (
-      scrollToIndex !== null &&
-      scrollToIndex !== undefined &&
-      listRef.current
-    ) {
-      listRef.current.scrollToItem(scrollToIndex, 'center');
+    if (listRef.current) {
+      if (scrollToIndex !== null && scrollToIndex !== undefined) {
+        listRef.current.scrollToItem(scrollToIndex, 'center');
+      } else if (messages.length > 0) {
+        // Auto-scroll to bottom on load if no specific index is requested
+        // Use a slight timeout to ensure list is ready
+        setTimeout(() => {
+          listRef.current?.scrollToItem(messages.length - 1, 'end');
+        }, 0);
+      }
     }
-  }, [scrollToIndex]);
+  }, [scrollToIndex, messages]);
 
   // Initial date set
   useEffect(() => {
@@ -83,50 +88,50 @@ function MessageListInner({
   const handleDateClick = useCallback(() => {
     // Programmatically open the date picker
     if (dateInputRef.current && 'showPicker' in HTMLInputElement.prototype) {
-        try {
-            dateInputRef.current.showPicker();
-        } catch (error) {
-            // Fallback for browsers not supporting showPicker (rare now)
-            dateInputRef.current.focus();
-            dateInputRef.current.click();
-        }
+      try {
+        dateInputRef.current.showPicker();
+      } catch (error) {
+        // Fallback for browsers not supporting showPicker (rare now)
+        dateInputRef.current.focus();
+        dateInputRef.current.click();
+      }
     } else {
-        dateInputRef.current?.click();
+      dateInputRef.current?.click();
     }
   }, []);
 
   const handleDateChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedDate = e.target.value; // YYYY-MM-DD
-        if (!selectedDate || !listRef.current) return;
+      const selectedDate = e.target.value; // YYYY-MM-DD
+      if (!selectedDate || !listRef.current) return;
 
-        // Find the exact date or the next available date
-        let targetIndex = -1;
-        
-        // Check exact match
-        if (dateToIndexMap.has(selectedDate)) {
-            targetIndex = dateToIndexMap.get(selectedDate)!;
-        } else {
-            // Find the closest next date
-            // Since map keys insertion order is chronological for sorted messages
-            // we can just iterate to find the first one >= selectedDate
-            for (const [dateStr, index] of dateToIndexMap) {
-                if (dateStr >= selectedDate) {
-                    targetIndex = index;
-                    break;
-                }
-            }
-        }
+      // Find the exact date or the next available date
+      let targetIndex = -1;
 
-        if (targetIndex !== -1) {
-            listRef.current.scrollToItem(targetIndex, 'start');
-        } else {
-            // If date is after all messages, scroll to end
-            listRef.current.scrollToItem(messages.length - 1, 'end');
+      // Check exact match
+      if (dateToIndexMap.has(selectedDate)) {
+        targetIndex = dateToIndexMap.get(selectedDate)!;
+      } else {
+        // Find the closest next date
+        // Since map keys insertion order is chronological for sorted messages
+        // we can just iterate to find the first one >= selectedDate
+        for (const [dateStr, index] of dateToIndexMap) {
+          if (dateStr >= selectedDate) {
+            targetIndex = index;
+            break;
+          }
         }
-        
-        // Reset input so the same date can be selected again if needed (though unlikely)
-        e.target.value = '';
+      }
+
+      if (targetIndex !== -1) {
+        listRef.current.scrollToItem(targetIndex, 'start');
+      } else {
+        // If date is after all messages, scroll to end
+        listRef.current.scrollToItem(messages.length - 1, 'end');
+      }
+
+      // Reset input so the same date can be selected again if needed (though unlikely)
+      e.target.value = '';
     },
     [dateToIndexMap, messages.length]
   );
@@ -226,27 +231,27 @@ function MessageListInner({
     <>
       {stickyDate && (
         <>
-            <button 
-                className="message-list__sticky-date"
-                onClick={handleDateClick}
-                aria-label="選擇日期跳轉"
-                title="點擊跳轉至特定日期"
-            >
-                {stickyDate}
-                <svg className="message-list__sticky-date-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-            </button>
-            <input
-                ref={dateInputRef}
-                type="date"
-                className="message-list__hidden-date-picker"
-                onChange={handleDateChange}
-                min={minDate}
-                max={maxDate}
-                aria-hidden="true"
-                tabIndex={-1}
-            />
+          <button
+            className="message-list__sticky-date"
+            onClick={handleDateClick}
+            aria-label="選擇日期跳轉"
+            title="點擊跳轉至特定日期"
+          >
+            {stickyDate}
+            <svg className="message-list__sticky-date-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <input
+            ref={dateInputRef}
+            type="date"
+            className="message-list__hidden-date-picker"
+            onChange={handleDateChange}
+            min={minDate}
+            max={maxDate}
+            aria-hidden="true"
+            tabIndex={-1}
+          />
         </>
       )}
       <List

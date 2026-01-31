@@ -5,10 +5,15 @@ interface LandingPageProps {
     onFileSelect: (file: File) => void;
     isLoading: boolean;
     progress: number;
+    estimatedMemory: string | null;
+    fileSize?: number;
 }
 
-export function LandingPage({ onFileSelect, isLoading, progress }: LandingPageProps) {
+export function LandingPage({ onFileSelect, isLoading, progress, estimatedMemory, fileSize }: LandingPageProps) {
     const [isDragging, setIsDragging] = useState(false);
+
+    // Warning if file size > 300MB
+    const isWarning = fileSize ? fileSize > 300 * 1024 * 1024 : false;
 
     const handleFileChange = useCallback(
         (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,6 +125,13 @@ export function LandingPage({ onFileSelect, isLoading, progress }: LandingPagePr
                                 />
                             </div>
                             <p className="landing__progress-text">解析中... {progress}%</p>
+                            {estimatedMemory && (
+                                <p className={`landing__est-memory ${isWarning ? 'landing__est-memory--warning' : ''}`}>
+                                    {isWarning ? '⚠️ ' : 'ℹ️ '}
+                                    {fileSize ? `檔案大小: ${(fileSize / 1024 / 1024).toFixed(1)} MB / ` : ''}
+                                    預計佔用資源: {estimatedMemory}
+                                </p>
+                            )}
                         </div>
                     ) : (
                         <>
